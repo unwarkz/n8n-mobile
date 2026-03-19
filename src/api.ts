@@ -15,8 +15,10 @@ async function fetchN8n(endpoint: string, options: RequestInit = {}) {
   }
 
   let baseUrl = instance.url.trim().replace(/\/$/, '');
-  if (!baseUrl.endsWith('/api/v1')) {
-    baseUrl = `${baseUrl}/api/v1`;
+  const apiPath = (instance.apiPath || 'api').trim().replace(/^\//, '').replace(/\/$/, '');
+  
+  if (!baseUrl.endsWith(`/${apiPath}/v1`)) {
+    baseUrl = `${baseUrl}/${apiPath}/v1`;
   }
   const url = `${baseUrl}${endpoint}`;
 

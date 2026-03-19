@@ -7,7 +7,7 @@ export default function InstancesScreen() {
   const navigate = useNavigate();
   const { instances, addInstance, removeInstance, setActiveInstance } = useStore();
   const [isAdding, setIsAdding] = useState(false);
-  const [formData, setFormData] = useState({ name: '', url: '', apiKey: '' });
+  const [formData, setFormData] = useState({ name: '', url: '', apiKey: '', apiPath: 'api' });
   const [error, setError] = useState('');
 
   const handleConnect = (id: string) => {
@@ -19,7 +19,7 @@ export default function InstancesScreen() {
     e.preventDefault();
     setError('');
     
-    if (!formData.name || !formData.url || !formData.apiKey) {
+    if (!formData.name || !formData.url || !formData.apiKey || !formData.apiPath) {
       setError('All fields are required');
       return;
     }
@@ -32,7 +32,7 @@ export default function InstancesScreen() {
     }
 
     addInstance(formData);
-    setFormData({ name: '', url: '', apiKey: '' });
+    setFormData({ name: '', url: '', apiKey: '', apiPath: 'api' });
     setIsAdding(false);
   };
 
@@ -86,6 +86,17 @@ export default function InstancesScreen() {
                 placeholder="n8n_api_..."
               />
               <p className="text-xs text-neutral-500 mt-1">Create this in n8n Settings &gt; n8n API</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">API Path</label>
+              <input
+                type="text"
+                value={formData.apiPath}
+                onChange={(e) => setFormData({ ...formData, apiPath: e.target.value })}
+                className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                placeholder="api"
+              />
+              <p className="text-xs text-neutral-500 mt-1">Change if you modified N8N_ENDPOINT_API (default: api). /v1 is added automatically.</p>
             </div>
             <div className="flex gap-3 pt-2">
               <button
@@ -168,7 +179,8 @@ export default function InstancesScreen() {
                     id: mockId, 
                     name: 'Test Instance (Mock API)', 
                     url: 'https://mock.n8n.local', 
-                    apiKey: 'mock-api-key' 
+                    apiKey: 'mock-api-key',
+                    apiPath: 'api'
                   }]
                 }));
                 handleConnect(mockId);

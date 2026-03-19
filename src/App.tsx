@@ -10,7 +10,6 @@ import Layout from './components/Layout';
 import InstancesScreen from './screens/InstancesScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import WorkflowsScreen from './screens/WorkflowsScreen';
-import WorkflowEditorScreen from './screens/WorkflowEditorScreen';
 import ExecutionsScreen from './screens/ExecutionsScreen';
 import CredentialsScreen from './screens/CredentialsScreen';
 import UsersScreen from './screens/UsersScreen';
@@ -39,7 +38,6 @@ export default function App() {
         >
           <Route index element={<DashboardScreen />} />
           <Route path="workflows" element={<WorkflowsScreen />} />
-          <Route path="workflows/:id" element={<WorkflowEditorScreen />} />
           <Route path="executions" element={<ExecutionsScreen />} />
           <Route path="credentials" element={<CredentialsScreen />} />
           <Route path="users" element={<UsersScreen />} />

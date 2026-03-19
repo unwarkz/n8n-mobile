@@ -6,6 +6,7 @@ export interface N8nInstance {
   name: string;
   url: string;
   apiKey: string;
+  apiPath?: string;
 }
 
 export interface LogEntry {

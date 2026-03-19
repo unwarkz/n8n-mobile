@@ -5,8 +5,8 @@ import { api } from '../api';
 
 export default function DashboardScreen() {
   const [stats, setStats] = useState({
-    workflows: 0,
-    executions: 0,
+    workflows: { total: 0, active: 0, disabled: 0 },
+    executions: { total: 0, success: 0, error: 0, rate: 0 },
     credentials: 0,
     users: 0,
   });
@@ -25,9 +25,21 @@ export default function DashboardScreen() {
         api.getUsers(),
       ]);
 
+      const workflowsData = workflowsRes.status === 'fulfilled' ? workflowsRes.value.data || [] : [];
+      const executionsData = executionsRes.status === 'fulfilled' ? executionsRes.value.data || [] : [];
+      
+      const activeWorkflows = workflowsData.filter((w: any) => w.active).length;
+      const disabledWorkflows = workflowsData.length - activeWorkflows;
+
+      const successExecutions = executionsData.filter((e: any) => e.status === 'success').length;
+      const errorExecutions = executionsData.filter((e: any) => e.status === 'error').length;
+      const successRate = executionsData.length > 0 
+        ? Math.round((successExecutions / executionsData.length) * 100) 
+        : 0;
+
       setStats({
-        workflows: workflowsRes.status === 'fulfilled' ? workflowsRes.value.data?.length || 0 : 0,
-        executions: executionsRes.status === 'fulfilled' ? executionsRes.value.data?.length || 0 : 0,
+        workflows: { total: workflowsData.length, active: activeWorkflows, disabled: disabledWorkflows },
+        executions: { total: executionsData.length, success: successExecutions, error: errorExecutions, rate: successRate },
         credentials: credentialsRes.status === 'fulfilled' ? credentialsRes.value.data?.length || 0 : 0,
         users: usersRes.status === 'fulfilled' ? usersRes.value.data?.length || 0 : 0,
       });
@@ -74,14 +86,16 @@ export default function DashboardScreen() {
       <div className="grid grid-cols-2 gap-4">
         <DashboardCard 
           title="Workflows" 
-          value={loading ? "..." : stats.workflows} 
+          value={loading ? "..." : stats.workflows.total} 
+          subtitle={loading ? "" : `${stats.workflows.active} active, ${stats.workflows.disabled} disabled`}
           icon={<GitMerge className="text-blue-500" size={24} />} 
           to="/workflows"
           color="bg-blue-50"
         />
         <DashboardCard 
           title="Executions" 
-          value={loading ? "..." : stats.executions} 
+          value={loading ? "..." : stats.executions.total} 
+          subtitle={loading ? "" : `${stats.executions.success} ok, ${stats.executions.error} err (${stats.executions.rate}%)`}
           icon={<Activity className="text-green-500" size={24} />} 
           to="/executions"
           color="bg-green-50"
@@ -105,7 +119,7 @@ export default function DashboardScreen() {
   );
 }
 
-function DashboardCard({ title, value, icon, to, color }: { title: string, value: number | string, icon: React.ReactNode, to: string, color: string }) {
+function DashboardCard({ title, value, subtitle, icon, to, color }: { title: string, value: number | string, subtitle?: string, icon: React.ReactNode, to: string, color: string }) {
   return (
     <Link to={to} className="block bg-white p-4 rounded-2xl shadow-sm border border-neutral-200 active:scale-95 transition-transform">
       <div className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center mb-3`}>
@@ -113,6 +127,7 @@ function DashboardCard({ title, value, icon, to, color }: { title: string, value
       </div>
       <h3 className="text-neutral-500 text-sm font-medium">{title}</h3>
       <p className="text-2xl font-bold text-neutral-900 mt-1">{value}</p>
+      {subtitle && <p className="text-xs text-neutral-400 mt-1">{subtitle}</p>}
     </Link>
   );
 }
