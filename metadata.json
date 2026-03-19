@@ -1,0 +1,5 @@
+{
+  "name": "n8n Mobile",
+  "description": "Mobile interface for managing self-hosted n8n instances, workflows, and executions.",
+  "requestFramePermissions": []
+}
