@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  n8n-mobile:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: n8n-mobile:latest
+    container_name: n8n-mobile
+    ports:
+      - "8010:80" # Map port 8010 on the host to port 80 in the container
+    restart: unless-stopped
+    # If you need to pass environment variables during runtime, you can add them here
+    # environment:
+    #   - VITE_SOME_VAR=value
